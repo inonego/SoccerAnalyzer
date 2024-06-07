@@ -1,4 +1,5 @@
 import cv2
+import math
 import numpy as np
 
 def get_polygon_mask(shape, vertices):
@@ -8,7 +9,7 @@ def get_polygon_mask(shape, vertices):
 
     return mask
 
-def draw_line_on_histogram_image(hist_img, position, color):
+def line_histogram_image(hist_img, position, color):
     hist_img[:, position] = color
 
     return hist_img
@@ -25,3 +26,22 @@ def get_histogram_image(hist, bin=256, height=256):
         cv2.line(hist_img, (x, height), (x, height - int(hist[x])), (255, 255, 255), 1)
 
     return hist_img
+
+def rotate_image(src, degree):
+    h, w = src.shape[:2]
+    center = (w / 2, h / 2)
+
+    rot = cv2.getRotationMatrix2D(center, degree, 1)
+
+    rad = math.radians(degree)
+    sin = math.sin(rad)
+    cos = math.cos(rad)
+    b_w = int((h * abs(sin)) + (w * abs(cos)))
+    b_h = int((h * abs(cos)) + (w * abs(sin)))
+
+    rot[0, 2] += ((b_w / 2) - center[0])
+    rot[1, 2] += ((b_h / 2) - center[1])
+
+    outImg = cv2.warpAffine(src, rot, (b_w, b_h), flags=cv2.INTER_LINEAR)
+    
+    return outImg
