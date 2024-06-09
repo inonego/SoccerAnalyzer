@@ -2,6 +2,13 @@ import cv2
 import math
 import numpy as np
 
+def draw_lines(img, lines, color=[255, 0, 0], thickness=2):
+    if lines is None:
+        return
+    for line in lines:
+        for x1, y1, x2, y2 in line:
+            cv2.line(img, (x1, y1), (x2, y2), color, thickness)
+
 def get_polygon_mask(shape, vertices):
     mask = np.zeros(shape, dtype=np.uint8)
     # 다각형 영역 채우기
